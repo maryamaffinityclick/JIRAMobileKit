@@ -133,79 +133,6 @@ public class JIRA {
         }
     }
     
-    public func doLogin(completion: @escaping ()->Void){
-        guard let rootController = UIApplication.shared.keyWindow?.rootViewController else {
-            return
-        }
-        
-        let loginVC = JIRALoginViewController(nibName: "JIRALoginViewController", bundle: JIRA.getBundle())
-        loginVC.onLoginCompletionBlock = completion
-        rootController.present(loginVC, animated: true, completion: nil)
-    }
-    
-    public func raise(defaultFields:[String:Any]? = nil){
-        if JIRA.shared.username == nil || JIRA.shared.password == nil {
-            doLogin {
-                self.launchCreateScreen(defaultFields: defaultFields)
-            }
-        }else{
-            launchCreateScreen(defaultFields: defaultFields)
-        }
-        
-    }
-    
-    private func launchCreateScreen(defaultFields:[String:Any]? = nil){
-        guard let rootController = UIApplication.shared.keyWindow?.rootViewController else {
-            return
-        }
-        
-        // Start with global fields
-        var fields = self.globalDefaultFields ?? [String:Any]()
-        
-        // merge in default fields for current view
-        if let singleDefaults = defaultFields {
-            singleDefaults.forEach({ (key, value) in
-                fields[key] = value
-            })
-        }
-        
-        // Add Image
-        if let image = UIApplication.shared.keyWindow?.capture() {
-            if let attachments = fields["attachment"] {
-                if var attachmentAry = attachments as? [Any] {
-                    attachmentAry.insert(image, at: 0)
-                    fields["attachment"] = attachmentAry
-                }else{
-                    fields["attachment"] = [image,attachments]
-                }
-            }else{
-                fields["attachment"] = [image]
-            }
-        }
-        if let environment = fields["environment"] as? String {
-            fields["environment"] = environment + " " + JIRA.environmentString()
-        }else{
-            fields["environment"] = JIRA.environmentString()
-        }
-        let newVC = JIRARaiseTableViewController()
-        var currentController: UIViewController! = rootController
-        while( currentController.presentedViewController != nil ) {
-            currentController = currentController.presentedViewController
-        }
-        newVC.singleInstanceDefaultFields = fields
-        newVC.image = UIApplication.shared.keyWindow?.capture()
-        
-        let nav = UINavigationController(rootViewController: newVC);
-        nav.navigationBar.barStyle = .blackOpaque
-        nav.navigationBar.tintColor = UIColor.white
-        nav.navigationBar.barTintColor = JIRA.MainColor
-        nav.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
-        nav.navigationBar.isTranslucent = false
-        nav.navigationBar.isOpaque = true
-        currentController.present(nav, animated: true)
-        
-    }
-    
     func generateBearerToken(username:String, password:String)->String?{
         let userPasswordString = username + ":" + password
         if let userPasswordData = userPasswordString.data(using: String.Encoding.utf8) {
@@ -619,9 +546,4 @@ public class JIRA {
         return "Boundary-\(NSUUID().uuidString)"
     }
     
-    public func getFullImage()->UIImage{
-        let window: UIWindow! = UIApplication.shared.keyWindow
-        
-        return window.capture()
-    }
 }
