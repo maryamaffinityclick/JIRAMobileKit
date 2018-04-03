@@ -44,7 +44,7 @@ enum JIRASchemaSystem:String {
     case attachment = "attachment"
 }
 
-class JIRAEntity :NSObject {
+public class JIRAEntity :NSObject {
     required public override init() {
         super.init()
     }
@@ -54,7 +54,7 @@ class JIRAEntity :NSObject {
     }
 }
 
-class JIRASchema{
+public class JIRASchema{
     var type:JIRASchemaType?
     var system:JIRASchemaSystem?
     var custom:String?
@@ -83,9 +83,9 @@ class JIRASchema{
     }
 }
 
-class JIRAAllowedValue:JIRAEntity,DisplayClass{
-    var id:String?
-    var name:String?
+public class JIRAAllowedValue:JIRAEntity,DisplayClass {
+    public var id:String?
+    public var name:String?
     var value:String?
     func applyData(data:[AnyHashable:Any]){
         if let id = data["id"] as? String {
@@ -222,7 +222,7 @@ class JIRAUser:JIRAEntity,DisplayClass{
     }
 }
 
-class JIRAField{
+public class JIRAField{
     var required:Bool = false
     var schema:JIRASchema?
     var identifier:String?
@@ -273,11 +273,11 @@ class JIRAField{
     }
 }
 
-class JIRAIssueType{
-    var id:String?
+public class JIRAIssueType{
+    open var id:String?
     var desc:String?
     var iconUrl:String?
-    var name:String?
+    open var name:String?
     var subtask:Bool = false
     var fields:[JIRAField]?
     
@@ -309,12 +309,12 @@ class JIRAIssueType{
     }
 }
 
-class JIRAProject {
+open class JIRAProject {
     var id:String?
     var key:String?
     var name:String?
     var avatarUrls:[String:String]?
-    var issueTypes:[JIRAIssueType]?
+    open var issueTypes:[JIRAIssueType]?
     func applyData(data:[AnyHashable:Any]){
         if let id = data["id"] as? String {
             self.id = id

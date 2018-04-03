@@ -13,7 +13,7 @@ public class JIRA {
     
     // Jira singleton instance
     public static var shared = JIRA()
-
+    
     // END POINTS
     private static let url_issue  = "rest/api/2/issue";
     private static let url_issue_attachments = "rest/api/2/issue/%@/attachments";
@@ -144,11 +144,11 @@ public class JIRA {
     }
     
     public func raise(defaultFields:[String:Any]? = nil){
-       if JIRA.shared.username == nil || JIRA.shared.password == nil {
+        if JIRA.shared.username == nil || JIRA.shared.password == nil {
             doLogin {
                 self.launchCreateScreen(defaultFields: defaultFields)
             }
-       }else{
+        }else{
             launchCreateScreen(defaultFields: defaultFields)
         }
         
@@ -199,7 +199,7 @@ public class JIRA {
         nav.navigationBar.barStyle = .blackOpaque
         nav.navigationBar.tintColor = UIColor.white
         nav.navigationBar.barTintColor = JIRA.MainColor
-        nav.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+        nav.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
         nav.navigationBar.isTranslucent = false
         nav.navigationBar.isOpaque = true
         currentController.present(nav, animated: true)
@@ -214,7 +214,7 @@ public class JIRA {
         }
         return nil
     }
-
+    
     func getBearerToken()->String?{
         if let username = self.username, let password =
             self.password {
@@ -279,15 +279,15 @@ public class JIRA {
         }
         let systemVersion = UIDevice.current.systemVersion
         /*var output = ""
-        Bundle.allFrameworks.forEach { (bundle) in
-            if let bundleIdentifier = bundle.bundleIdentifier, bundleIdentifier.contains("com.apple") == false{
-                var record = bundleIdentifier
-                if let version = bundle.infoDictionary!["CFBundleShortVersionString"] as? String {
-                    record += " - \(version)"
-                }
-                output += record+"\n"
-            }
-        }*/
+         Bundle.allFrameworks.forEach { (bundle) in
+         if let bundleIdentifier = bundle.bundleIdentifier, bundleIdentifier.contains("com.apple") == false{
+         var record = bundleIdentifier
+         if let version = bundle.infoDictionary!["CFBundleShortVersionString"] as? String {
+         record += " - \(version)"
+         }
+         output += record+"\n"
+         }
+         }*/
         
         return "\(UIDevice.current.model) \(systemVersion) version: \(versionStr) - build: \(buildStr)"
     }
@@ -298,7 +298,7 @@ public class JIRA {
             if let key = key as? String {
                 if value is String {
                     data[key] = value
-                }else if let jiraEntity = value as? JIRAEntity {
+                }else if  let jiraEntity = value as? JIRAEntity {
                     data[key] = jiraEntity.export()
                 }else if let jiraEntityAry = value as? [JIRAEntity] {
                     let entities = jiraEntityAry.map({ (entity) -> Any? in
@@ -312,7 +312,7 @@ public class JIRA {
         return ["fields":data]
     }
     
-    internal func create(issueData:[AnyHashable:Any], completion: @escaping (_ error:String?,_ key:String?) -> Void){
+    public func create(issueData:[AnyHashable:Any], completion: @escaping (_ error:String?,_ key:String?) -> Void){
         guard let url = URL(string: "\(host!)/\(JIRA.url_issue)") else {
             print("JIRA KIT Error - Create url invalid")
             completion("Create url invalid", nil)
@@ -450,7 +450,7 @@ public class JIRA {
         task.resume()
     }
     
-    internal func createMeta(_ completion: @escaping (_ error:Bool, _ project:JIRAProject?) -> Void){
+    public func createMeta(_ completion: @escaping (_ error:Bool, _ project:JIRAProject?) -> Void){
         if let cachedData = UserDefaults.standard.data(forKey: "JIRA_CREATEMETA_CACHE") {
             processCreateMetaData(cachedData, completion: completion)
             return
@@ -475,10 +475,10 @@ public class JIRA {
             return;
         }
         
-       guard let fieldNameEscaped = fieldName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+        guard let fieldNameEscaped = fieldName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
             let termEscaped = term.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
             let url = URL(string:"\(host!)\(JIRA.url_jql_property)fieldName=\(fieldNameEscaped)&fieldValue=\(termEscaped)") else{
-            return
+                return
         }
         var request = URLRequest(url: url)
         request.addValue("application/json", forHTTPHeaderField: "Accept")
@@ -525,19 +525,19 @@ public class JIRA {
             })
             if currentProject?.count == 1 {
                 DispatchQueue.main.async {
-                    completion(true,currentProject?[0])
+                    completion(false,currentProject?[0])
                 }
                 
             }else{
                 DispatchQueue.main.async {
-                    completion(false,nil)
+                    completion(true,nil)
                 }
             }
             
         } catch {
             print("error serializing JSON: \(error)")
             DispatchQueue.main.async {
-                completion(false,nil)
+                completion(true,nil)
             }
         }
     }
