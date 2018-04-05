@@ -149,8 +149,8 @@ class JIRAJQLValue:JIRAEntity,DisplayClass{
 }
 
 
-class JIRALabel:JIRAEntity,DisplayClass{
-    var labelVal:String?
+public class JIRALabel:JIRAEntity,DisplayClass{
+    public var labelVal:String?
     var html:String?
     required public init() {
         super.init()
@@ -413,3 +413,4 @@ class JIRAIssue:JIRAEntity,DisplayClass {
         }
     }
 }
+

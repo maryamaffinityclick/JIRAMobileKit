@@ -195,7 +195,7 @@ public class JIRA {
         task.resume()
     }
     
-    static func environmentString()->String {
+    public static func environmentString()->String {
         var buildStr = "";
         var versionStr = "";
         if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
@@ -216,7 +216,7 @@ public class JIRA {
          }
          }*/
         
-        return "\(UIDevice.current.model) \(systemVersion) version: \(versionStr) - build: \(buildStr)"
+        return "\(UIDevice.current.model) \(systemVersion) appVersion: \(versionStr) - build: \(buildStr)"
     }
     
     private func createDataTransferObject(_ issueData:[AnyHashable:Any]) -> [String:Any]{
